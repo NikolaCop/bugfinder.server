@@ -21,9 +21,17 @@ class BugsService {
   async delete(id, userId) {
     // const bug = await dbContext.Bug.findOneAndRemove({ _id: id, creatorId: userId })
     // if (!bug) {
-    //   throw new BadRequest('BAD REQUEST')
+    //   throw new BadRequest('Invalid Request')
     // }
     // return bug
+  }
+
+  async edit(id, userId, body) {
+    const bug = await dbContext.Bug.findOneAndUpdate({ _id: id, creatorId: userId }, body, { new: true })
+    if (!bug) {
+      throw new BadRequest('Invalid Request')
+    }
+    return bug
   }
 }
 
