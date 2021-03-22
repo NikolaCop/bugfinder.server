@@ -3,11 +3,11 @@ import { BadRequest } from '../utils/Errors'
 
 class BugsService {
   async find(query = {}) {
-    return await dbContext.Bug.find(query)
+    return await dbContext.Bug.find(query).populate('creator')
   }
 
   async findById(id) {
-    const bug = await dbContext.Bug.findById(id)
+    const bug = await dbContext.Bug.findById(id).populate('creator')
     if (!bug) {
       throw new BadRequest('Invalid ID')
     }
@@ -19,17 +19,20 @@ class BugsService {
   }
 
   async delete(id, userId) {
-    // const bug = await dbContext.Bug.findOneAndRemove({ _id: id, creatorId: userId })
-    // if (!bug) {
-    //   throw new BadRequest('Invalid Request')
-    // }
-    // return bug
+    const bug = await dbContext.Bug.findOneAndUpdate({ _id: id, creatorId: userId }, { closed: true })
+    if (!bug) {
+      throw new BadRequest('Invalid Request')
+    }
+    return bug
   }
 
   async edit(id, userId, body) {
     const bug = await dbContext.Bug.findOneAndUpdate({ _id: id, creatorId: userId }, body, { new: true })
     if (!bug) {
       throw new BadRequest('Invalid Request')
+    }
+    if (bug.closed) {
+      throw new BadRequest('YOU SHALL NOT PASS')
     }
     return bug
   }

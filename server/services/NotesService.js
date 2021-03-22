@@ -3,11 +3,11 @@ import { BadRequest } from '../utils/Errors'
 
 class NotesService {
   async find(query = {}) {
-    return await dbContext.Note.find(query)
+    return await dbContext.Note.find(query).populate('creator')
   }
 
   async findById(id) {
-    const note = await dbContext.Note.findById(id)
+    const note = await dbContext.Note.findById(id).populate('creator')
     if (!note) {
       throw new BadRequest('Invalid ID')
     }
@@ -21,7 +21,7 @@ class NotesService {
   async delete(id, userId) {
     const note = await dbContext.Note.findOneAndRemove({ _id: id, creatorId: userId })
     if (!note) {
-      throw new BadRequest('BAD REQUEST')
+      throw new BadRequest('Invalid Request')
     }
     return note
   }

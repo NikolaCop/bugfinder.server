@@ -8,5 +8,11 @@ const Bug = new Schema({
   closedDate: { type: Date },
   creatorId: { type: String, required: true }
 }, { timestamps: true, toJSON: { virtuals: true } })
+Bug.virtual('creator', {
+  localField: 'creatorId',
+  ref: 'Account',
+  foreignField: '_id',
+  justOne: true
+})
 
 export default Bug
